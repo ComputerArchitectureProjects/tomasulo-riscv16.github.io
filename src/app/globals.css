@@ -25,3 +25,52 @@ body {
     )
     rgb(var(--background-start-rgb));
 }
+
+.Home {
+  position: relative;
+  background-color: #555360;
+  display: flex;
+  flex-direction: column;
+  height: auto;
+  width:  auto;
+  min-height: 100vh;
+  min-width: 100vw;
+}
+
+.Editor {
+  position: absolute;
+  background-color: #1E1E1E;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 50%;
+  width:  50%;
+  left: 2%;
+  top: 40%;
+  border-radius: 10px;
+}
+
+.EditorComponent {
+  display: flex;
+  flex-direction: column;
+  height: fit-content;
+  width: 100%;
+  min-height: 100%;
+  padding-top: 1%;
+}
+
+.Line{
+  width: 90%;
+  border: none;
+  height: 1px;
+  background-color: white;
+}
+
+.h6 {
+  color: wheat;
+  font-family: Courier New,Courier,monospace;
+  font-size: calc(10px + .5vmin);
+  margin: 0;
+  padding-top: 1%;
+  padding-bottom: 1%;
+}
