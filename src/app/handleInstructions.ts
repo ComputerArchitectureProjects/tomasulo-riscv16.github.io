@@ -5,28 +5,28 @@ class InstructionHandler {
     constructor(input: string, startingaddress: number, numOfStations: number[]) {
         this.instructions = input.split('\n');
         //this.startingaddress = startingaddress;
-        this.Memory = new Memory();
-        this.RegisterFile = new RegisterFile();
-        this.LoadStations = (numOfStations[0] > 0) ? numOfStations[0] : 2;
-        this.StoreStations = (numOfStations[1] > 0) ? numOfStations[1] : 2;
+        this.memory = new Memory();
+        this.registerFile = new RegisterFile();
+        this.loadStations = (numOfStations[0] > 0) ? numOfStations[0] : 2;
+        this.storeStations = (numOfStations[1] > 0) ? numOfStations[1] : 2;
         this.BNEStations = (numOfStations[2] > 0) ? numOfStations[2] : 1;
-        this.CallRetStations = (numOfStations[3] > 0) ? numOfStations[3] : 1;
-        this.AddAddiStations = (numOfStations[4] > 0) ? numOfStations[4] : 3;
-        this.DivStations = (numOfStations[5] > 0) ? numOfStations[5] : 1;
-        this.NandStations = (numOfStations[6] > 0) ? numOfStations[6] : 1;
+        this.callRetStations = (numOfStations[3] > 0) ? numOfStations[3] : 1;
+        this.addAddiStations = (numOfStations[4] > 0) ? numOfStations[4] : 3;
+        this.divStations = (numOfStations[5] > 0) ? numOfStations[5] : 1;
+        this.nandStations = (numOfStations[6] > 0) ? numOfStations[6] : 1;
     }
 
-    private Memory: Memory;
-    private RegisterFile: RegisterFile;
+    private memory: Memory;
+    private registerFile: RegisterFile;
     private instructions: string[];
     private startingaddress: number = 0;
-    private LoadStations: number = 2;
-    private StoreStations: number = 2;
+    private loadStations: number = 2;
+    private storeStations: number = 2;
     private BNEStations: number = 1;
-    private CallRetStations: number = 1;
-    private AddAddiStations: number = 3;
-    private DivStations: number = 1;
-    private NandStations: number = 1;
+    private callRetStations: number = 1;
+    private addAddiStations: number = 3;
+    private divStations: number = 1;
+    private nandStations: number = 1;
     private issueTime: number[];
     private startExecutionTime: number[];
     private endExecutionTime: number[];
