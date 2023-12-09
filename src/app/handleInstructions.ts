@@ -382,6 +382,58 @@ class InstructionHandler {
             }
         
         }
+        for (let i = 0; i < this.addAddiStations.length; i++) {
+            if (this.addAddiStations[i].getBusy() && this.startExecutionTime[this.addAddiStations[i].getnumOfInstruction()] == null) {
+                if (this.addAddiStations[i].getVj() !== -1 && this.issueTime[this.addAddiStations[i].getnumOfInstruction()] < this.curClockCycle) {
+                    let instructionNumber = this.addAddiStations[i].getnumOfInstruction();
+                    let instruction = this.instructions[instructionNumber].split(' ');
+                    if (instruction[0] === "ADD" && this.addAddiStations[i].getVk() !== -1) {
+                        this.startExecutionTime[instructionNumber] = this.curClockCycle;
+                        this.endExecutionTime[instructionNumber] = this.curClockCycle + 1;
+                        this.writeTime[instructionNumber] = this.curClockCycle + 2;
+                        this.minHeapWriting.push({ writeTime: this.writeTime[instructionNumber], stationNumber: i, station: "ADD" });
+                        alert(this.minHeapWriting.peek().stationNumber + "station number");
+                        alert(this.minHeapWriting.peek().writeTime + "write time");
+                    } else if (instruction[0] === "ADDI") {
+                        this.startExecutionTime[instructionNumber] = this.curClockCycle;
+                        this.endExecutionTime[instructionNumber] = this.curClockCycle + 1;
+                        this.writeTime[instructionNumber] = this.curClockCycle + 2;
+                        this.minHeapWriting.push({ writeTime: this.writeTime[instructionNumber], stationNumber: i, station: "ADDI" });
+                        alert(this.minHeapWriting.peek().stationNumber + "station number");
+                        alert(this.minHeapWriting.peek().writeTime + "write time");
+                    }
+                }
+            }
+        }
+
+        for (let i = 0; i < this.nandStations.length; i++) {
+            if (this.nandStations[i].getBusy() && this.startExecutionTime[this.nandStations[i].getnumOfInstruction()] == null) {
+                if (this.nandStations[i].getVj() !== -1 && this.nandStations[i].getVk() !== -1 && this.issueTime[this.nandStations[i].getnumOfInstruction()] < this.curClockCycle) {
+                    let instructionNumber = this.nandStations[i].getnumOfInstruction();
+                    this.startExecutionTime[instructionNumber] = this.curClockCycle;
+                    this.endExecutionTime[instructionNumber] = this.curClockCycle;
+                    this.writeTime[instructionNumber] = this.curClockCycle + 1;
+                    this.minHeapWriting.push({ writeTime: this.writeTime[instructionNumber], stationNumber: i, station: "NAND" });
+                    alert(this.minHeapWriting.peek().stationNumber + "station number");
+                    alert(this.minHeapWriting.peek().writeTime + "write time");
+                }
+            }
+        }
+
+        for (let i = 0; i < this.divStations.length; i++) {
+            if (this.divStations[i].getBusy() && this.startExecutionTime[this.divStations[i].getnumOfInstruction()] == null) {
+                if (this.divStations[i].getVj() !== -1 && this.divStations[i].getVk() !== -1 && this.issueTime[this.divStations[i].getnumOfInstruction()] < this.curClockCycle) {
+                    let instructionNumber = this.divStations[i].getnumOfInstruction();
+                    this.startExecutionTime[instructionNumber] = this.curClockCycle;
+                    this.endExecutionTime[instructionNumber] = this.curClockCycle + 9;
+                    this.writeTime[instructionNumber] = this.curClockCycle + 10;
+                    this.minHeapWriting.push({ writeTime: this.writeTime[instructionNumber], stationNumber: i, station: "NAND" });
+                    alert(this.minHeapWriting.peek().stationNumber + "station number");
+                    alert(this.minHeapWriting.peek().writeTime + "write time");
+                }
+            }
+        }
+
     }
     public tomasulo(instructions: string[]): void {
         for (let i = 0 ; i < instructions.length ; i++) { // fix loop over clock cycles
