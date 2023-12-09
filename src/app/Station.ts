@@ -12,6 +12,7 @@ class Station {
         this.qk = {station: "", index: -1};
         this.a = -1;
         this.name = "";
+        this.numOfInstruction = -1;
     }
 
     private name: string;
@@ -22,6 +23,7 @@ class Station {
     private qj: Pair;
     private qk: Pair;
     private a: number;
+    private numOfInstruction: number;
 
     public getName(): string {
         return this.name;
@@ -87,6 +89,14 @@ class Station {
         this.a = a;
     }
 
+    public setnumOfInstruction(numOfInstruction: number): void {
+        this.numOfInstruction = numOfInstruction;
+    }
+
+    public getnumOfInstruction(): number {
+        return this.numOfInstruction;
+    }
+
     public reset(): void {
         this.busy = false;
         this.op = "";
@@ -95,6 +105,7 @@ class Station {
         this.qj = {station: "", index: -1};
         this.qk = {station: "", index: -1};
         this.a  = -1;
+        this.numOfInstruction = -1;
     }
 }   
 

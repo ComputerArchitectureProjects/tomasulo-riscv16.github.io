@@ -1,5 +1,5 @@
 // Original JavaScript Code from  Marijn Haverbeke (http://eloquentjavascript.net/1st_edition/appendix2.html)
-export class BinaryHeap<T> {
+export default class BinaryHeap<T> {
     content: T[];
     scoreFunction: (x: T) => number;
 
