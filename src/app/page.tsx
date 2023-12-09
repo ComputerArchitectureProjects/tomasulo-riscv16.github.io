@@ -23,20 +23,27 @@ const Home = () => {
     } else {
       alert('Refresh the page and try again!');
     }
+    /*
+    LOAD X1, 43(X2)
+STORE X1, 43(X2)
+ADD X1, X2, X3
+NAND X1, X2, X3
+DIV X1, X2, X3
+ADDI X1, X2, 44
+*/
   }
 
   function test() {
-    //if (editorRef.current) {
-    //  InstructionHandlerRef.current = new InstructionHandler(editorRef.current.getValue(),0,[0]);
-    //} 
-    //const heap = new BinaryHeap<{ key: number; value: string }>((pair) => pair.key);
-    // Push elements to the heap
-    let lol = "ADDI r2, r1, 854472";
-    let instruction = lol.split(" ");
-    let  dest = parseInt(instruction[1][1]);
-    let  src1 = parseInt(instruction[2][1]);
-    let  imm = parseInt(instruction[3]);
-    alert(dest + " " + src1 + " " + imm);                   
+    if (editorRef.current) {
+      InstructionHandlerRef.current = new InstructionHandler(editorRef.current.getValue(),0,[-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1]);
+      let tes = InstructionHandlerRef.current.issueTime;
+      for(let i = 0; i < tes.length; i++){
+        alert(tes[i]+ " " + i);
+      }
+    } 
+    else {
+      alert('Refresh the page and try again!');
+    } 
   }
 
   return (

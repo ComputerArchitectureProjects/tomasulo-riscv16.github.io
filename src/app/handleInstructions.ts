@@ -8,6 +8,7 @@ type Pair = {
 
 class InstructionHandler {
     constructor(input: string, startingaddress: number, numOfStations: number[]) {
+        alert(input)
         this.instructions             = input.split('\n');
         //this.startingaddress = startingaddress;
         this.memory                   = new Memory();
@@ -20,7 +21,7 @@ class InstructionHandler {
         this.availableDivStations     = (numOfStations[5] > 0) ? numOfStations[5] : 1;
         this.availableNandStations    = (numOfStations[6] > 0) ? numOfStations[6] : 1;
         this.PC                       = startingaddress;
-        
+        this.issueTime                = new Array<number>(this.instructions.length);
         for( let i = 0 ; i < this.availableLoadStations ; i++ ) {
             let station = new Station();
             station.setName("Load");
@@ -62,6 +63,7 @@ class InstructionHandler {
         for (let i = 0; i < 8; i++) {
             this.registerWrite[i] = {station: "", index: -1};
         }
+        this.executeInstructions(this.instructions);
     }
 
     private loadStations: Station[] = [];
@@ -85,10 +87,10 @@ class InstructionHandler {
     private registerWrite; 
 
     private PC: number;
-    private issueTime: number[];
-    private startExecutionTime: number[];
+    public issueTime;
+    /*private startExecutionTime: number[];
     private endExecutionTime: number[];
-    private writeTime: number[];
+    private writeTime: number[];*/
     private issueCounter: number = 0;
     private curClockCycle: number = 1;
 
@@ -286,9 +288,10 @@ class InstructionHandler {
     }
 
     public executeInstructions(instructions: string[]): void {
-        for (this.curClockCycle = 1 ; this.curClockCycle < 2 ; this.curClockCycle++) {
+        for (let i = 0 ; i < instructions.length ; i++) { // fix loop over clock cycles
             let instruction = instructions[this.issueCounter].split(' ');    
             this.issueInstruction(instruction);
+            this.curClockCycle++;
         }
     }
 }
