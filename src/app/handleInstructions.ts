@@ -7,43 +7,43 @@ class InstructionHandler {
         //this.startingaddress = startingaddress;
         this.Memory = new Memory();
         this.RegisterFile = new RegisterFile();
-        this.availableLoadStations = (numOfStations[0]>0) ? numOfStations[0] : 2;
-        this.availableStoreStations = (numOfStations[1]>0) ? numOfStations[1] : 2;
-        this.availableBNEStations = (numOfStations[2]>0) ? numOfStations[2] : 1;
-        this.availableCallRetStations = (numOfStations[3]>0) ? numOfStations[3] : 1;
-        this.availableAddAddiStations = (numOfStations[4]>0) ? numOfStations[4] : 3;
-        this.availableDivStations = (numOfStations[5]>0) ? numOfStations[5] : 1; 
-        this.availableNandStations = (numOfStations[6]>0) ? numOfStations[6] : 1;
+        this.LoadStations = (numOfStations[0] > 0) ? numOfStations[0] : 2;
+        this.StoreStations = (numOfStations[1] > 0) ? numOfStations[1] : 2;
+        this.BNEStations = (numOfStations[2] > 0) ? numOfStations[2] : 1;
+        this.CallRetStations = (numOfStations[3] > 0) ? numOfStations[3] : 1;
+        this.AddAddiStations = (numOfStations[4] > 0) ? numOfStations[4] : 3;
+        this.DivStations = (numOfStations[5] > 0) ? numOfStations[5] : 1;
+        this.NandStations = (numOfStations[6] > 0) ? numOfStations[6] : 1;
     }
-    
-    private Memory : Memory;
-    private RegisterFile : RegisterFile;    
+
+    private Memory: Memory;
+    private RegisterFile: RegisterFile;
     private instructions: string[];
     private startingaddress: number = 0;
-    private availableLoadStations: number = 2;
-    private availableStoreStations: number = 2;
-    private availableBNEStations: number = 1;
-    private availableCallRetStations: number = 1;
-    private availableAddAddiStations: number = 3;
-    private availableDivStations: number = 1;
-    private availableNandStations: number = 1;
+    private LoadStations: number = 2;
+    private StoreStations: number = 2;
+    private BNEStations: number = 1;
+    private CallRetStations: number = 1;
+    private AddAddiStations: number = 3;
+    private DivStations: number = 1;
+    private NandStations: number = 1;
     private issueTime: number[];
     private startExecutionTime: number[];
     private endExecutionTime: number[];
     private writeTime: number[];
-    private issueCounter : number = 0;
+    private issueCounter: number = 0;
     private curClockCycle: number = 1;
-    
+
     public executeInstructions(instruction: string[]): void {
         const opcode = instruction[0];
-        for( ; this.issueCounter < instruction.length ; this.curClockCycle++) {
+        for (; this.issueCounter < instruction.length; this.curClockCycle++) {
             switch (opcode) {
                 case "LOAD":
-                    if(this.availableLoadStations > 0) {
-                //        this.issueTime[this.issueCounter] = this.curClockCycle;
-                //        this.availableLoadStations--;
-                //        this.issueCounter++;
-                }
+                    if (this.LoadStations > 0) {
+                        //        this.issueTime[this.issueCounter] = this.curClockCycle;
+                        //        this.availableLoadStations--;
+                        //        this.issueCounter++;
+                    }
                     break;
                 case "STORE":
                     break;
@@ -64,9 +64,9 @@ class InstructionHandler {
                 default:
                     throw new Error("Invalid opcode");
             }
-    
+
         }
     }
 }
-  
+
 export default InstructionHandler;
