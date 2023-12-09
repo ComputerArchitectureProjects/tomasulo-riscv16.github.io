@@ -22,7 +22,7 @@ export class BinaryHeap<T> {
         }
         return result;
     }
-
+    
     peek(): T {
         return this.content[0];
     }

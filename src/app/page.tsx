@@ -26,68 +26,17 @@ const Home = () => {
   }
 
   function test() {
-    // if (editorRef.current) {
-    //  InstructionHandlerRef.current = new InstructionHandler(editorRef.current.getValue());
-    // } 
-    const heap = new BinaryHeap<{ key: number; value: string }>((pair) => pair.key);
+    //if (editorRef.current) {
+    //  InstructionHandlerRef.current = new InstructionHandler(editorRef.current.getValue(),0,[0]);
+    //} 
+    //const heap = new BinaryHeap<{ key: number; value: string }>((pair) => pair.key);
     // Push elements to the heap
-    heap.push({ key: 5, value: "F" });
-    heap.push({ key: 3, value: "Thrwwwee" });
-    heap.push({ key: 10, value: "Ten" });
-    heap.push({ key: 1, value: "One" });
-    alert(heap.peek().key);
-    alert(heap.peek().value);
-    alert(heap.pop().key);
-    alert(heap.peek().key);
-    alert(heap.peek().value);
-    alert(heap.pop().key);
-
-
-
-    /* bin.push([8,'e']);
-    alert(bin.peak());
-    alert(bin.pop());
-    alert(bin.peak());
-    alert(bin.pop());
-    alert(bin.peak());
-    alert(bin.pop());
-    alert(bin.peak());
-    alert(bin.pop());
-    alert(bin.peak());
-    alert(bin.pop());
-    alert(bin.peak());
-    alert(bin.pop());
-    alert(bin.peak());
-    alert(bin.pop());
-    alert(bin.peak());
-    alert(bin.pop());
-    alert(bin.peak());
-    alert(bin.pop());
-    alert(bin.peak());
-    alert(bin.pop());
-    alert(bin.peak());
-    alert(bin.pop());
-    alert(bin.peak());
-    alert(bin.pop());
-    alert(bin.peak());
-    alert(bin.pop());
-    alert(bin.peak());
-    alert(bin.pop());
-    alert(bin.peak());
-    alert(bin.pop());
-    alert(bin.peak());
-    alert(bin.pop());
-    alert(bin.peak());
-    alert(bin.pop());
-    alert(bin.peak());
-    alert(bin.pop());
-    alert(bin.peak());
-    alert(bin.pop());
-    alert(bin.peak());
-    alert(bin.pop());
-    alert(bin.peak());
-        */
-
+    let lol = "ADD r0, r1, r2";
+    let instruction = lol.split(" ");
+    let  dest = parseInt(instruction[1][1]);
+    let  src1 = parseInt(instruction[2][1]);
+    let  src2 = parseInt(instruction[3][1]);
+    alert(dest + " " + src1 + " " + src2);                   
   }
 
   return (
