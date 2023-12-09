@@ -31,12 +31,12 @@ const Home = () => {
     //} 
     //const heap = new BinaryHeap<{ key: number; value: string }>((pair) => pair.key);
     // Push elements to the heap
-    let lol = "ADD r0, r1, r2";
+    let lol = "ADDI r2, r1, 854472";
     let instruction = lol.split(" ");
     let  dest = parseInt(instruction[1][1]);
     let  src1 = parseInt(instruction[2][1]);
-    let  src2 = parseInt(instruction[3][1]);
-    alert(dest + " " + src1 + " " + src2);                   
+    let  imm = parseInt(instruction[3]);
+    alert(dest + " " + src1 + " " + imm);                   
   }
 
   return (

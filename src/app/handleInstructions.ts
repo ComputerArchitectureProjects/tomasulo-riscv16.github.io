@@ -101,16 +101,16 @@ class InstructionHandler {
                         if(!this.loadStations[i].getBusy()) {
                             this.loadStations[i].setBusy(true);
                             this.loadStations[i].setOp(opcode);
-                            // let  dest = parseInt(instruction[1].substring(1, instruction[1].length - 1));
+                            let  dest = parseInt(instruction[1].substring(1, instruction[1].length - 1));
                             // let  offset = parseInt(instruction[2].substring(0, instruction[2].length - 1));
                             let  base = parseInt(instruction[2][instruction[2].length - 2]);
                             if(this.registerWrite[base].station != "") {
                                 this.loadStations[i].setVj(base);
-                                this.registerWrite[base].station = this.loadStations[i].getName();
-                                this.registerWrite[base].index = i;
                             }else {
                                 this.loadStations[i].setQj(this.registerWrite[base]);
                             }
+                            this.registerWrite[dest].station = this.loadStations[i].getName();
+                            this.registerWrite[dest].index = i;
                             // part of execution this.loadStations[i].setA(offset+this.registerFile.readRegister(base));
                             this.issueTime[this.issueCounter] = this.curClockCycle;
                             this.issueCounter++;
@@ -126,15 +126,18 @@ class InstructionHandler {
                         if(!this.storeStations[i].getBusy()) {
                             this.storeStations[i].setBusy(true);
                             this.storeStations[i].setOp(opcode);
-                            // let  dest = parseInt(instruction[1].substring(1, instruction[1].length - 1));
                             // let  offset = parseInt(instruction[2].substring(0, instruction[2].length - 1));
-                            let  base = parseInt(instruction[2][instruction[2].length - 2]);
-                            if(this.registerWrite[base].station != "") {
-                                this.storeStations[i].setVj(base);
-                                this.registerWrite[base].station = this.storeStations[i].getName();
-                                this.registerWrite[base].index = i;
+                            let  rs1 = parseInt(instruction[2][instruction[2].length - 2]); // base
+                            let  rs2 = parseInt(instruction[1].substring(1, instruction[1].length - 1));
+                            if(this.registerWrite[rs1].station != "") {
+                                this.storeStations[i].setVj(rs1);
                             }else {
-                                this.storeStations[i].setQj(this.registerWrite[base]);
+                                this.storeStations[i].setQj(this.registerWrite[rs1]);
+                            }
+                            if(this.registerWrite[rs2].station != "") {
+                                this.storeStations[i].setVk(rs2);
+                            }else {
+                                this.storeStations[i].setQk(this.registerWrite[rs2]);
                             }
                             // part of execution this.storeStations[i].setA(offset+this.registerFile.readRegister(base));
                             this.issueTime[this.issueCounter] = this.curClockCycle;
@@ -173,18 +176,16 @@ class InstructionHandler {
                             let  src2 = parseInt(instruction[3][1]);
                             if(this.registerWrite[src1].station != "") {
                                 this.addAddiStations[i].setVj(src1);
-                                this.registerWrite[src1].station = this.addAddiStations[i].getName();
-                                this.registerWrite[src1].index = i;
                             }else {
                                 this.addAddiStations[i].setQj(this.registerWrite[src1]);
                             }
                             if(this.registerWrite[src2].station != "") {
                                 this.addAddiStations[i].setVk(src2);
-                                this.registerWrite[src2].station = this.addAddiStations[i].getName();
-                                this.registerWrite[src2].index = i;
                             }else {
                                 this.addAddiStations[i].setQk(this.registerWrite[src2]);
                             }
+                            this.registerWrite[dest].station = this.addAddiStations[i].getName();
+                            this.registerWrite[dest].index = i
                             this.issueTime[this.issueCounter] = this.curClockCycle;
                             this.issueCounter++;
                             this.availableAddAddiStations--;
@@ -202,14 +203,14 @@ class InstructionHandler {
                             this.addAddiStations[i].setOp(opcode);
                             let  dest = parseInt(instruction[1][1]);
                             let  src1 = parseInt(instruction[2][1]);
-                            let  imm = parseInt(instruction[3]);
+                            // let  imm = parseInt(instruction[3]);
                             if(this.registerWrite[src1].station != "") {
                                 this.addAddiStations[i].setVj(src1);
-                                this.registerWrite[src1].station = this.addAddiStations[i].getName();
-                                this.registerWrite[src1].index = i;
                             }else {
                                 this.addAddiStations[i].setQj(this.registerWrite[src1]);
                             }
+                            this.registerWrite[dest].station = this.addAddiStations[i].getName();
+                            this.registerWrite[dest].index = i;
                             this.issueTime[this.issueCounter] = this.curClockCycle;
                             this.issueCounter++;
                             this.availableAddAddiStations--;
@@ -217,15 +218,66 @@ class InstructionHandler {
                         }
                     }
                 }
-
             }
                 break;
             case "NAND":{
-
+                if (this.availableNandStations > 0){
+                    for(let i = 0 ; i < this.nandStations.length ; i++) {
+                        if(!this.nandStations[i].getBusy()) {
+                            this.nandStations[i].setBusy(true);
+                            this.nandStations[i].setOp(opcode);
+                            let  dest = parseInt(instruction[1][1]);
+                            let  src1 = parseInt(instruction[2][1]);
+                            let  src2 = parseInt(instruction[3][1]);
+                            if(this.registerWrite[src1].station != "") {
+                                this.nandStations[i].setVj(src1);
+                            }else {
+                                this.nandStations[i].setQj(this.registerWrite[src1]);
+                            }
+                            if(this.registerWrite[src2].station != "") {
+                                this.nandStations[i].setVk(src2);
+                            }else {
+                                this.nandStations[i].setQk(this.registerWrite[src2]);
+                            }
+                            this.registerWrite[dest].station = this.nandStations[i].getName();
+                            this.registerWrite[dest].index = i;
+                            this.issueTime[this.issueCounter] = this.curClockCycle;
+                            this.issueCounter++;
+                            this.availableNandStations--;
+                            break;
+                        }
+                    }
+                }
             }
                 break;
             case "DIV":{
-
+                if (this.availableDivStations > 0){
+                    for(let i = 0 ; i < this.divStations.length ; i++) {
+                        if(!this.divStations[i].getBusy()) {
+                            this.divStations[i].setBusy(true);
+                            this.divStations[i].setOp(opcode);
+                            let  dest = parseInt(instruction[1][1]);
+                            let  src1 = parseInt(instruction[2][1]);
+                            let  src2 = parseInt(instruction[3][1]);
+                            if(this.registerWrite[src1].station != "") {
+                                this.divStations[i].setVj(src1);
+                            }else {
+                                this.divStations[i].setQj(this.registerWrite[src1]);
+                            }
+                            if(this.registerWrite[src2].station != "") {
+                                this.divStations[i].setVk(src2);
+                            }else {
+                                this.divStations[i].setQk(this.registerWrite[src2]);
+                            }
+                            this.registerWrite[dest].station = this.divStations[i].getName();
+                            this.registerWrite[dest].index = i;
+                            this.issueTime[this.issueCounter] = this.curClockCycle;
+                            this.issueCounter++;
+                            this.availableDivStations--;
+                            break;
+                        }
+                    }
+                }
             }
                 break;
             default:
