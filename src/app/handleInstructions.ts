@@ -5,7 +5,6 @@ import RegisterFile from './registers';
 type Pair = {
     station: string, index: number
 }
-
 class InstructionHandler {
     constructor(input: string, startingaddress: number, numOfStations: number[]) {
         alert(input)
@@ -154,17 +153,23 @@ class InstructionHandler {
                 break;
             case "BNE":{
                 if (this.availableBNEStations > 0) {
-                    
+                
                 }
 
             }
                 break;
             case "CALL":{
-
+                if (this.availableCallRetStations > 0) {
+                    for(this.availableCallRetStations){
+                        
+                    }
+                }
             }
                 break;
             case "RET":{
-
+                if (this.availableCallRetStations > 0) {
+                    
+                }
             }
                 break;
             case "ADD":{
