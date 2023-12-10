@@ -2,6 +2,7 @@ import Memory from './memory';
 import Station from './Station';
 import RegisterFile from './registers';
 import BinaryHeap from './minheap';
+import { Alert } from '@mui/material';
 
 type Pair = {
     station: string, index: number
@@ -108,6 +109,7 @@ class InstructionHandler {
         switch (opcode) {
             case "LOAD":{
                 if (this.availableLoadStations > 0) {
+                    alert(instruction )
                     for(let i = 0 ; i < this.loadStations.length ; i++) {
                         if(!this.loadStations[i].getBusy()) {
                             this.loadStations[i].setBusy(true);
@@ -332,6 +334,7 @@ class InstructionHandler {
             }
                 break;
             default:{
+                alert("Invalid opcode" + opcode);
                 throw new Error("Invalid opcode");
             }    
         }
@@ -345,13 +348,14 @@ class InstructionHandler {
                     let instruction = this.instructions[instructionNumber].split(' ');
                     let offset = parseInt(instruction[2].substring(0, instruction[2].length - 1));
                     let base   = parseInt(instruction[2][instruction[2].length - 2]);
-                    this.loadStations[i].setA(base+offset);
+                    this.loadStations[i].setA(this.registerFile.readRegister(base)+offset);
                     this.startExecutionTime[instructionNumber] = this.curClockCycle + 1;
                     this.endExecutionTime[instructionNumber] = this.curClockCycle + 2;
                     this.writeTime[instructionNumber] = this.curClockCycle + 3;
                     this.minHeapWriting.push({writeTime: this.writeTime[instructionNumber], stationNumber: i, station: "LOAD"});
-                    alert(this.minHeapWriting.peek().stationNumber +"station number");  
-                    alert(this.minHeapWriting.peek().writeTime + "write time");
+                    alert(i +"LOAD station number");  
+                    alert(this.writeTime[instructionNumber] + "LOAD write time");
+                    alert(instruction);
                 }
             }
         }
@@ -362,11 +366,13 @@ class InstructionHandler {
                     let instruction = this.instructions[instructionNumber].split(' ');
                     let offset = parseInt(instruction[2].substring(0, instruction[2].length - 1));
                     let base   = parseInt(instruction[2][instruction[2].length - 2]);
-                    this.storeStations[i].setA(base+offset);
+                    this.storeStations[i].setA(this.registerFile.readRegister(base)+offset);
                     this.startExecutionTime[instructionNumber] = this.curClockCycle +1 ;
                     this.endExecutionTime[instructionNumber] = this.curClockCycle + 2;
                     this.writeTime[instructionNumber] = this.curClockCycle + 3;
                     this.minHeapWriting.push({writeTime: this.writeTime[instructionNumber], stationNumber: i, station: "STORE"});
+                    alert(i +"STORE station number");  
+                    alert(this.writeTime[instructionNumber] + "STORE write time");
                 }
             }
         }
@@ -435,11 +441,162 @@ class InstructionHandler {
         }
 
     }
+    public writeInstruction(): void {
+        if (!this.minHeapWriting.isEmpty() && this.minHeapWriting.peek().writeTime <= this.curClockCycle) {
+            let min = this.minHeapWriting.pop();
+            let stationNumber = min.stationNumber;
+            let station = min.station;
+            switch (station) {
+                case "LOAD": {
+                    let A = this.loadStations[stationNumber].getA();
+                    let value = this.memory.readMemory(A);
+                    let instructionNumber = this.loadStations[stationNumber].getnumOfInstruction();
+                    let instruction = this.instructions[instructionNumber].split(' ');
+                    let dest = parseInt(instruction[1].substring(1, instruction[1].length - 1));
+                    this.registerFile.writeRegister(dest, value);
+                    this.loadStations[stationNumber].reset();
+                    this.availableLoadStations++;
+                    this.registerWrite[dest].station = "";
+                    this.registerWrite[dest].index = -1;
+                    this.writeTime[instructionNumber] = this.curClockCycle;
+                }
+                case "STORE": {
+                    let A = this.storeStations[stationNumber].getA();
+                    let value = this.storeStations[stationNumber].getVk();
+                    let instructionNumber = this.storeStations[stationNumber].getnumOfInstruction();
+                    this.memory.writeMemory(A, value);
+                    this.storeStations[stationNumber].reset();
+                    this.availableStoreStations++;
+                    this.writeTime[instructionNumber] = this.curClockCycle;
+                }
+                case "BNE": {
+                    let instructionNumber = this.bneStations[stationNumber].getnumOfInstruction();
+                    let instruction = this.instructions[instructionNumber].split(' ');
+                    let rs1 = parseInt(instruction[1][1]);
+                    let rs2 = parseInt(instruction[2][1]);
+                    let imm = parseInt(instruction[3]);
+                    if (this.bneStations[stationNumber].getVj() !== this.bneStations[stationNumber].getVk()) {
+                        this.PC += imm;
+                        // fix later plz
+                    }
+                    this.bneStations[stationNumber].reset();
+                    this.availableBNEStations++;
+                    this.writeTime[instructionNumber] = this.curClockCycle;
+                    for(let i = 0 ; i < this.loadStations.length ; i++) {
+                        if(this.loadStations[i].getnumOfInstruction() > instructionNumber) {
+                            this.loadStations[i].reset();
+                        }
+                    }
+                    for(let i = 0 ; i < this.storeStations.length ; i++) {
+                        if(this.storeStations[i].getnumOfInstruction() > instructionNumber) {
+                            this.storeStations[i].reset();
+                        }
+                    }
+                    for(let i = 0 ; i < this.bneStations.length ; i++) {
+                        if(this.bneStations[i].getnumOfInstruction() > instructionNumber) {
+                            this.bneStations[i].reset();
+                        }
+                    }
+                    for(let i = 0 ; i < this.callRetStations.length ; i++) {
+                        if(this.callRetStations[i].getnumOfInstruction() > instructionNumber) {
+                            this.callRetStations[i].reset();
+                        }
+                    }
+                    for(let i = 0 ; i < this.addAddiStations.length ; i++) {
+                        if(this.addAddiStations[i].getnumOfInstruction() > instructionNumber) {
+                            this.addAddiStations[i].reset();
+                        }
+                    }
+                    for(let i = 0 ; i < this.divStations.length ; i++) {
+                        if(this.divStations[i].getnumOfInstruction() > instructionNumber) {
+                            this.divStations[i].reset();
+                        }
+                    }
+                    for(let i = 0 ; i < this.nandStations.length ; i++) {
+                        if(this.nandStations[i].getnumOfInstruction() > instructionNumber) {
+                            this.nandStations[i].reset();
+                        }
+                    }
+                }
+                case "ADD": {
+                    let instructionNumber = this.addAddiStations[stationNumber].getnumOfInstruction();
+                    let instruction = this.instructions[instructionNumber].split(" ");
+                    let dest = parseInt(instruction[1][1]);
+                    let value = this.addAddiStations[stationNumber].getVj() + this.addAddiStations[stationNumber].getVk();
+                    this.registerFile.writeRegister(dest, value);
+                    this.addAddiStations[stationNumber].reset();
+                    this.availableAddAddiStations++;
+                    this.registerWrite[dest].station = "";
+                    this.registerWrite[dest].index = -1;
+                    this.writeTime[instructionNumber] = this.curClockCycle;
+                }
+                case "ADDI": {
+                    let instructionNumber = this.addAddiStations[stationNumber].getnumOfInstruction();
+                    let instruction = this.instructions[instructionNumber].split(" ");
+                    let dest = parseInt(instruction[1][1]);
+                    let value = this.addAddiStations[stationNumber].getVj() + parseInt(instruction[3]);
+                    this.registerFile.writeRegister(dest, value);
+                    this.addAddiStations[stationNumber].reset();
+                    this.availableAddAddiStations++;
+                    this.registerWrite[dest].station = "";
+                    this.registerWrite[dest].index = -1;
+                    this.writeTime[instructionNumber] = this.curClockCycle;
+                }
+                case "NAND": {
+                    let instructionNumber = this.nandStations[stationNumber].getnumOfInstruction();
+                    let instruction = this.instructions[instructionNumber].split(" ");
+                    let dest = parseInt(instruction[1][1]);
+                    let value = ~(this.nandStations[stationNumber].getVj() & this.nandStations[stationNumber].getVk());
+                    this.registerFile.writeRegister(dest, value);
+                    this.nandStations[stationNumber].reset();
+                    this.availableNandStations++;
+                    this.registerWrite[dest].station = "";
+                    this.registerWrite[dest].index = -1;
+                    this.writeTime[instructionNumber] = this.curClockCycle;
+                }
+                case "DIV": {
+                    let instructionNumber = this.divStations[stationNumber].getnumOfInstruction();
+                    let instruction = this.instructions[instructionNumber].split(" ");
+                    let dest = parseInt(instruction[1][1]);
+                    let value = this.divStations[stationNumber].getVj() / this.divStations[stationNumber].getVk();
+                    // float ? int ?
+                    this.registerFile.writeRegister(dest, value);
+                    this.divStations[stationNumber].reset();
+                    this.availableDivStations++;
+                    this.registerWrite[dest].station = "";
+                    this.registerWrite[dest].index = -1;
+                    this.writeTime[instructionNumber] = this.curClockCycle;
+                }
+                case "CALL": {
+                    let instructionNumber = this.callRetStations[stationNumber].getnumOfInstruction();
+                    let instruction = this.instructions[instructionNumber].split(" ");
+                    let label = instruction[1];
+                    let value = this.callRetStations[stationNumber].getA();
+                    this.registerFile.writeRegister(1, value);
+                    this.PC = value - 1  + parseInt(label);
+                    this.callRetStations[stationNumber].reset();
+                    this.availableCallRetStations++;
+                    this.writeTime[instructionNumber] = this.curClockCycle;
+                }
+                case "RET": {
+                    this.PC = this.registerFile.readRegister(1);
+                    this.writeTime[this.callRetStations[stationNumber].getnumOfInstruction()] = this.curClockCycle;
+                    this.callRetStations[stationNumber].reset();
+                    this.availableCallRetStations++;
+                }
+                default: {
+                    alert("Invalid station name" + station);
+                    throw new Error("Invalid station name");
+                }
+            }
+        }
+    }
     public tomasulo(instructions: string[]): void {
         for (let i = 0 ; i < instructions.length ; i++) { // fix loop over clock cycles
             let instruction = instructions[this.issueCounter].split(' ');    
             this.issueInstruction(instruction);
             this.executeInstruction();
+            this.writeInstruction();
             this.curClockCycle++;   
         }
     }

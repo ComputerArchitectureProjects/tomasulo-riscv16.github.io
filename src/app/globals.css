@@ -75,3 +75,33 @@ body {
   padding-top: 1%;
   padding-bottom: 1%;
 }
+
+.ui.table tbody tr:hover {
+  background-color: rgb(179, 130, 9) !important; /* Add your desired color */
+  transition: all 0.2s ease-in-out;
+}
+
+.ui.table tbody tr {
+  cursor: pointer;
+}
+
+/*
+customize the color of the header row
+*/
+.ui.table thead th {
+  background-color:  rgb(73, 63, 63) !important;  
+  color:goldenrod !important;
+}
+
+/*
+customize the color of the body rows
+*/
+.ui.table tbody tr {
+  background-color: #1E1E1E !important;
+  color: white !important;
+}
+
+.ui.table {
+  border: none !important;
+  border-radius: 55px !important; 
+} 

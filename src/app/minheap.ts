@@ -26,6 +26,10 @@ export default class BinaryHeap<T> {
     peek(): T {
         return this.content[0];
     }
+
+    isEmpty(): boolean {
+        return this.content.length === 0;
+    }
     
     remove(node: T) {
         let length = this.content.length;
@@ -98,6 +102,7 @@ export default class BinaryHeap<T> {
             if (child2N < length) {
                 var child2 = this.content[child2N],
                     child2Score = this.scoreFunction(child2);
+                    child1Score = this.scoreFunction(this.content[child1N]);
                 if (child2Score < (swap == null ? elemScore : child1Score))
                     swap = child2N;
             }

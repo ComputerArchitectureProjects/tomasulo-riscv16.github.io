@@ -5,7 +5,8 @@ import Editor from '@monaco-editor/react';
 import RegisterFile from './registers';
 import Memory from './memory';
 import InstructionHandler  from './handleInstructions';
-import { BinaryHeap } from './minheap';
+import BinaryHeap  from './minheap';
+import GenericTable from './table';
 
 
 const Home = () => {
@@ -25,15 +26,34 @@ const Home = () => {
     }
     /*
     LOAD X1, 43(X2)
-STORE X1, 43(X2)
-ADD X1, X2, X3
-NAND X1, X2, X3
-DIV X1, X2, X3
-ADDI X1, X2, 44
-*/
+    STORE X1, 43(X2)
+    ADD X1, X2, X3
+    NAND X1, X2, X3
+    DIV X1, X2, X3
+    ADDI X1, X2, 44
+    */
   }
 
   function test() {
+    /*let BinaryHeapRef = new BinaryHeap(Number);
+    BinaryHeapRef.push(5);
+    BinaryHeapRef.push(-24);
+    BinaryHeapRef.push(1);
+    BinaryHeapRef.push(-1);
+    BinaryHeapRef.push(1);
+    BinaryHeapRef.push(1);
+    BinaryHeapRef.push(1);
+    BinaryHeapRef.push(1);
+    BinaryHeapRef.push(1);
+    alert(BinaryHeapRef.pop());
+    alert(BinaryHeapRef.pop());
+    alert(BinaryHeapRef.pop());
+    alert(BinaryHeapRef.pop());
+    alert(BinaryHeapRef.pop());
+    alert(BinaryHeapRef.pop());
+    alert(BinaryHeapRef.pop());
+    alert(BinaryHeapRef.pop());
+    alert(BinaryHeapRef.pop());*/
     if (editorRef.current) {
       InstructionHandlerRef.current = new InstructionHandler(editorRef.current.getValue(),0,[-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1]);
       let tes = InstructionHandlerRef.current.issueTime;
@@ -41,15 +61,27 @@ ADDI X1, X2, 44
         alert(tes[i]+ " " + i);
       }
     } 
-    else {
+      else {
       alert('Refresh the page and try again!');
     } 
+    /*
+    <GenericTable 
+          header = {['Instruction', 'Issue Time', 'Execute Time', 'Write Time', 'Commit Time']}
+          body   = {[['LOAD X1, 43(X2)', '1', '2', '3', '4'], ['STORE X1, 43(X2)', '1', '2', '3', '4'], ['ADD X1, X2, X3', '1', '2', '3', '4'], ['NAND X1, X2, X3', '1', '2', '3', '4'], ['DIV X1, X2, X3', '1', '2', '3', '4'], ['ADDI X1, X2, 44', '1', '2', '3', '4']]}
+        >
+    </GenericTable>    
+    */
   }
 
   return (
     <> 
       <div className='Home'>
-        <button onClick={test}>Show value</button>
+        <button onClick={test}>Run</button>
+        <GenericTable 
+          header = {['Instruction', 'Issue Time', 'Execute Time', 'Write Time', 'Commit Time']}
+          body   = {[['LOAD X1, 43(X2)', '1', '2', '3', '4'], ['STORE X1, 43(X2)', '1', '2', '3', '4'], ['ADD X1, X2, X3', '1', '2', '3', '4'], ['NAND X1, X2, X3', '1', '2', '3', '4'], ['DIV X1, X2, X3', '1', '2', '3', '4'], ['ADDI X1, X2, 44', '1', '2', '3', '4']]}
+        >
+        </GenericTable>    
         <div className='Editor'>
           <h6 className='h6'>Type Your Instructions</h6>
           <Editor
