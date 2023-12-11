@@ -193,6 +193,8 @@ class InstructionHandler {
                 this.bneStations[i].setVj(value);
                 this.bneStations[i].setQj({ station: "", index: -1 });
             }
+            //alert("BNE WRITE BACK")
+            //alert(this.bneStations[i].getBusy() + " " + this.bneStations[i].getQk().station + " " + this.bneStations[i].getQk().index + " " + RS.station + " " + RS.index + " " + this.bneStations[i].getQj().station + " " + this.bneStations[i].getQj().index + " " + this.bneStations[i].getVj() + " " + this.bneStations[i].getVk() + " " + value + " " + this.bneStations[i].getnumOfInstruction() + " " + this.bneStations[i].getOp())
             if (this.bneStations[i].getBusy() && this.bneStations[i].getQk().station === RS.station && this.bneStations[i].getQk().index === RS.index) {
                 this.bneStations[i].setVk(value);
                 this.bneStations[i].setQk({ station: "", index: -1 });
@@ -209,12 +211,17 @@ class InstructionHandler {
             }
         }
         for (let i = 0; i < this.addAddiStations.length; i++) {
+            //alert("IN ADDI UPDATE, index: " + i)
+            //alert("RS: station: " + RS.station + " index: " + RS.index)
+            //alert("station: " + this.addAddiStations[i].getQj().station + " index: " + this.addAddiStations[i].getQj().index)
             if (this.addAddiStations[i].getBusy() && this.addAddiStations[i].getQj().station === RS.station && this.addAddiStations[i].getQj().index === RS.index) {
                 this.addAddiStations[i].setVj(value);
+                //alert("INSIDE addi WRITE BACK, VJ IS: " + this.addAddiStations[i].getVj())
                 this.addAddiStations[i].setQj({ station: "", index: -1 });
             }
             if (this.addAddiStations[i].getBusy() && this.addAddiStations[i].getQk().station === RS.station && this.addAddiStations[i].getQk().index === RS.index) {
                 this.addAddiStations[i].setVk(value);
+                //alert("INSIDE addi WRITE BACK, VK IS: " + this.addAddiStations[i].getVk())
                 this.addAddiStations[i].setQk({ station: "", index: -1 });
             }
         }
@@ -258,7 +265,7 @@ class InstructionHandler {
                             if (this.registerWrite[base].station === "") {
                                 this.loadStations[i].setVj(this.registerFile.readRegister(base));
                             } else {
-                                this.loadStations[i].setQj(this.registerWrite[base]);
+                                this.loadStations[i].setQj(Object.assign({}, this.registerWrite[base]));
                             }
                             this.registerWrite[dest].station = this.loadStations[i].getName();
                             this.registerWrite[dest].index = i;
@@ -287,12 +294,12 @@ class InstructionHandler {
                             if (this.registerWrite[rs1].station === "") {
                                 this.storeStations[i].setVj(this.registerFile.readRegister(rs1));
                             } else {
-                                this.storeStations[i].setQj(this.registerWrite[rs1]);
+                                this.storeStations[i].setQj(Object.assign({}, this.registerWrite[rs1]));
                             }
                             if (this.registerWrite[rs2].station === "") {
                                 this.storeStations[i].setVk(this.registerFile.readRegister(rs2));
                             } else {
-                                this.storeStations[i].setQk(this.registerWrite[rs2]);
+                                this.storeStations[i].setQk(Object.assign({}, this.registerWrite[rs2]));
                             }
                             // part of execution this.storeStations[i].setA(offset+this.registerFile.readRegister(base));
                             this.isIssued = true;
@@ -318,12 +325,12 @@ class InstructionHandler {
                             if (this.registerWrite[rs1].station === "") {
                                 this.bneStations[i].setVj(this.registerFile.readRegister(rs1));
                             } else {
-                                this.bneStations[i].setQj(this.registerWrite[rs1]);
+                                this.bneStations[i].setQj(Object.assign({}, this.registerWrite[rs1]));
                             }
                             if (this.registerWrite[rs2].station === "") {
                                 this.bneStations[i].setVk(this.registerFile.readRegister(rs2));
                             } else {
-                                this.bneStations[i].setQk(this.registerWrite[rs2]);
+                                this.bneStations[i].setQk(Object.assign({}, this.registerWrite[rs2]));
                             }
                             this.bneStations[i].setA(this.PC + 1 + parseInt(instruction[3]));
                             this.isIssued = true;
@@ -353,7 +360,7 @@ class InstructionHandler {
                                 if (this.registerWrite[1].station === "") {
                                     this.callRetStations[i].setVj(this.registerFile.readRegister(1));
                                 } else {
-                                    this.callRetStations[i].setQj(this.registerWrite[1]);
+                                    this.callRetStations[i].setQj(Object.assign({}, this.registerWrite[1]));
                                 }
                             }
                             let label = (opcode === "CALL") ? instruction[1] : null;
@@ -384,12 +391,12 @@ class InstructionHandler {
                             if (this.registerWrite[rs1].station === "") {
                                 this.addAddiStations[i].setVj(this.registerFile.readRegister(rs1));
                             } else {
-                                this.addAddiStations[i].setQj(this.registerWrite[rs1]);
+                                this.addAddiStations[i].setQj(Object.assign({}, this.registerWrite[rs1]));
                             }
                             if (this.registerWrite[rs2].station === "") {
                                 this.addAddiStations[i].setVk(this.registerFile.readRegister(rs2));
                             } else {
-                                this.addAddiStations[i].setQk(this.registerWrite[rs2]);
+                                this.addAddiStations[i].setQk(Object.assign({}, this.registerWrite[rs2]));
                             }
                             this.registerWrite[dest].station = this.addAddiStations[i].getName();
                             this.registerWrite[dest].index = i
@@ -407,7 +414,7 @@ class InstructionHandler {
                 if (this.availableAddAddiStations > 0) {
                     for (let i = 0; i < this.addAddiStations.length; i++) {
                         if (!this.addAddiStations[i].getBusy()) {
-                            alert("in addi")
+                            //alert("in addi")
                             this.addAddiStations[i].setBusy(true);
                             this.addAddiStations[i].setOp(opcode);
                             this.addAddiStations[i].setnumOfInstruction(this.issueCounter);
@@ -416,11 +423,16 @@ class InstructionHandler {
                             // let  imm = parseInt(instruction[3]);
                             if (this.registerWrite[rs1].station === "") {
                                 this.addAddiStations[i].setVj(this.registerFile.readRegister(rs1));
+                                //alert("in addi ISSUE, VJ IS: " + this.addAddiStations[i].getVj())
                             } else {
-                                this.addAddiStations[i].setQj(this.registerWrite[rs1]);
+                                this.addAddiStations[i].setQj(Object.assign({}, this.registerWrite[rs1]));
+                                //alert("IN ADDI ISSUE, QJ IS: " + this.addAddiStations[i].getQj().station + " " + this.addAddiStations[i].getQj().index)
+                                //alert("Index in issue is: " + i)
                             }
                             this.registerWrite[dest].station = this.addAddiStations[i].getName();
                             this.registerWrite[dest].index = i;
+                            //alert("INDEX IN ISSUE IS: " + i)
+                            //alert("regWrite station: " + this.registerWrite[dest].station + " index: " + this.registerWrite[dest].index)
                             this.isIssued = true;
                             this.issueTime[this.issueCounter] = this.curClockCycle;
                             this.instructions.push(instruction.join(" "));
@@ -444,12 +456,12 @@ class InstructionHandler {
                             if (this.registerWrite[rs1].station === "") {
                                 this.nandStations[i].setVj(this.registerFile.readRegister(rs1));
                             } else {
-                                this.nandStations[i].setQj(this.registerWrite[rs1]);
+                                this.nandStations[i].setQj(Object.assign({}, this.registerWrite[rs1]));
                             }
                             if (this.registerWrite[rs2].station === "") {
                                 this.nandStations[i].setVk(this.registerFile.readRegister(rs2));
                             } else {
-                                this.nandStations[i].setQk(this.registerWrite[rs2]);
+                                this.nandStations[i].setQk(Object.assign({}, this.registerWrite[rs2]));
                             }
                             this.registerWrite[dest].station = this.nandStations[i].getName();
                             this.registerWrite[dest].index = i;
@@ -476,12 +488,12 @@ class InstructionHandler {
                             if (this.registerWrite[rs1].station === "") {
                                 this.divStations[i].setVj(this.registerFile.readRegister(rs1));
                             } else {
-                                this.divStations[i].setQj(this.registerWrite[rs1]);
+                                this.divStations[i].setQj(Object.assign({}, this.registerWrite[rs1]));
                             }
                             if (this.registerWrite[rs2].station === "") {
                                 this.divStations[i].setVk(this.registerFile.readRegister(rs2));
                             } else {
-                                this.divStations[i].setQk(this.registerWrite[rs2]);
+                                this.divStations[i].setQk(Object.assign({}, this.registerWrite[rs2]));
                             }
                             this.registerWrite[dest].station = this.divStations[i].getName();
                             this.registerWrite[dest].index = i;
@@ -716,13 +728,16 @@ class InstructionHandler {
                     instruction = this.cleanInstruction(instruction);
                     let opcode = this.addAddiStations[stationNumber].getOp();
                     let dest = parseInt(instruction[1][1]);
+                    //alert("VJ IS: " + this.addAddiStations[stationNumber].getVj() + " VK IS: " + this.addAddiStations[stationNumber].getVk())
                     let value = this.addAddiStations[stationNumber].getVj() + (opcode === "ADD" ? this.addAddiStations[stationNumber].getVk() : parseInt(instruction[3]));
                     this.registerFile.writeRegister(dest, value);
                     this.availableAddAddiStations++
                     //            alert("INSIDE ADDI WRITE: " + this.availableAddAddiStations)
                     this.writeTime[instructionNumber] = this.curClockCycle;
                     //            alert("actual ADD write time: " + this.writeTime[instructionNumber])
+                    //alert("I WILL START UPDATING NOW WITH STATION: " + station + " AND INDEX: " + stationNumber)
                     this.updateReservationStation({ station: station, index: stationNumber }, value);
+                    //alert("THE VALUE IS: " + value)
                     this.registerWrite[dest].station = "";
                     this.registerWrite[dest].index = -1;
                     this.addAddiStations[stationNumber].reset();
