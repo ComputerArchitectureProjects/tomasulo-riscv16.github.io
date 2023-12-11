@@ -821,7 +821,7 @@ class InstructionHandler {
         this.totalExecutionTime = this.curClockCycle;
         this.totalInstructions = this.instructions.length;
         this.IPC = this.totalInstructions / this.curClockCycle;
-        this.branchMispredictionRate = this.branchMisprediction / this.totalBranches;
+        this.branchMispredictionRate = this.branchMisprediction / this.totalBranches * 100;
     }
 
     private areStationsEmpty(): boolean {

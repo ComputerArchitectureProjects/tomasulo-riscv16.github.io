@@ -81,8 +81,8 @@ const Home = () => {
       let test3 = InstructionHandlerRef.current.endExecutionTime;
       let test4 = InstructionHandlerRef.current.writeTime;
       let IPC   = InstructionHandlerRef.current.IPC;
-      let branchMisprediction = InstructionHandlerRef.current.branchMisprediction;
-      let totalCycles = InstructionHandlerRef.current.totalExecutionTime;
+      let branchMisprediction = InstructionHandlerRef.current.branchMispredictionRate;
+      let totalCycles = InstructionHandlerRef.current.totalExecutionTime - 1;
       setIPC(IPC);
       setBranchMisprediction(branchMisprediction);
       setTotalExecutionTime(totalExecutionTime);
@@ -145,7 +145,7 @@ const Home = () => {
           <div className='rightside'>
             <div className='texteditors-container'>
                 <h2>IPC : {IPC}</h2>
-                <h2>Branch Misprediction % : {branchMisprediction}</h2>
+                <h2>Branch Misprediction % : {branchMisprediction} %</h2>
                 <h2>Total Cycles Spanned: {totalCycles}</h2>
             </div>
             <div className='table'>
