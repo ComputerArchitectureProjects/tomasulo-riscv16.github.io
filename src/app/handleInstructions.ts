@@ -2,7 +2,6 @@ import Memory from './memory';
 import Station from './Station';
 import RegisterFile from './registers';
 import BinaryHeap from './minheap';
-import { arrayBuffer } from 'node:stream/consumers';
 
 type Pair = {
     station: string, index: number
@@ -82,7 +81,6 @@ class InstructionHandler {
     private nandStations: Station[] = [];
     private memory: Memory;
     private registerFile: RegisterFile;
-    private instructions: string[] = [];
     private instructionMemory: string[];
     private startingaddress: number = 0;
     private availableLoadStations: number = 2;
@@ -96,14 +94,21 @@ class InstructionHandler {
     private bneFlagStationNumber: number = -1;
     private registerWrite;
     private PC: number;
-    public issueTime : number[];
-    public startExecutionTime : number[];
-    public endExecutionTime : number[];
-    public writeTime : number[];
     private issueCounter: number = 0;
     private curClockCycle: number = 1;
     private isIssued : boolean = false;
     private minHeapWriting: BinaryHeap<MinHeapPair>;
+    public instructions: string[] = [];
+    public issueTime : number[];
+    public startExecutionTime : number[];
+    public endExecutionTime : number[];
+    public writeTime : number[];
+    public IPC: number = 0;
+    public totalExecutionTime: number = 0;
+    public totalInstructions: number = 0;
+    public branchMisprediction: number = 0;
+    public totalBranches: number = 0;
+    public branchMispredictionRate: number = 0;
 
     private resetBneFlags(): void {
         this.bneFlag = -1;
@@ -404,6 +409,7 @@ class InstructionHandler {
                 if (this.availableAddAddiStations > 0) {
                     for (let i = 0; i < this.addAddiStations.length; i++) {
                         if (!this.addAddiStations[i].getBusy()) {
+                            alert("in addi")
                             this.addAddiStations[i].setBusy(true);
                             this.addAddiStations[i].setOp(opcode);
                             this.addAddiStations[i].setnumOfInstruction(this.issueCounter);
@@ -661,8 +667,10 @@ class InstructionHandler {
                 let imm = parseInt(instruction[3]);
                 if (this.bneStations[this.bneFlagStationNumber].getVj() !== this.bneStations[this.bneFlagStationNumber].getVk()) {
                     this.PC = this.bneStations[this.bneFlagStationNumber].getA() // fixxxxxxxxxxxxxxxxxx
+                    this.branchMisprediction++;
                     this.flushIssuing(instructionNumber);
                 }
+                this.totalBranches++;
                 this.bneStations[this.bneFlagStationNumber].reset();
                 this.availableBNEStations++;
                 this.writeTime[instructionNumber] = this.curClockCycle;
@@ -797,7 +805,11 @@ class InstructionHandler {
             }
             this.curClockCycle++;
             }while(this.PC < this.instructionMemory.length + this.startingaddress - 1 || !this.areStationsEmpty())
-        }
+            this.totalExecutionTime = this.curClockCycle;
+            this.totalInstructions  = this.instructions.length;
+            this.IPC = this.totalInstructions / this.curClockCycle;
+            this.branchMispredictionRate = this.branchMisprediction / this.totalBranches;
+    }
 
     private areStationsEmpty(): boolean {
         for(let i = 0; i < this.loadStations.length; i++){

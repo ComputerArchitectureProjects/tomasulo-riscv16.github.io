@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import TextField from '@mui/material/TextField';
 
-const IntegerTextField = () => {
+const IntegerTextField = ({ label, onInputChange } : any) => {
   const [value, setValue] = useState('');
 
   const handleInputChange = (e : any) => {
@@ -11,6 +11,8 @@ const IntegerTextField = () => {
     // Check if the input is a valid integer
     if (/^\d*$/.test(inputValue)) {
       setValue(inputValue);
+      // Pass the value to the parent component
+      onInputChange(inputValue);
     }
     // If not a valid integer, do nothing (or provide feedback to the user)
   };
@@ -19,7 +21,7 @@ const IntegerTextField = () => {
     <TextField
       className='texteditor'
       type="integer"
-      label="Enter an integer"
+      label={label}
       value={value}
       onChange={handleInputChange}
       variant="outlined"

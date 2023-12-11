@@ -4,11 +4,12 @@ import 'semantic-ui-css/semantic.min.css';
 
 type Props = {
   header: string[];
-  body: string[][];
+  body: [string, string | number, string | number, string | number, string | number][];
 };
 
 const GenericTable = (props: Props) => {
   const { header, body } = props;
+
   return (
     <Table celled style={{ width: '100%' }}>
       <Table.Header>
@@ -32,4 +33,3 @@ const GenericTable = (props: Props) => {
 };
 
 export default GenericTable;
-// deploy website
