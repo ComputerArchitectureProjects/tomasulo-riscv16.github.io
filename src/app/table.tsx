@@ -13,16 +13,16 @@ const GenericTable = (props: Props) => {
     <Table celled>
       <Table.Header>
         <Table.Row>
-          {header.map((headerItem) => (
-            <Table.HeaderCell>{headerItem}</Table.HeaderCell>
+          {header.map((headerItem, index) => (
+            <Table.HeaderCell key={index}>{headerItem}</Table.HeaderCell>
           ))}
         </Table.Row>
       </Table.Header>
       <Table.Body>
-        {body.map((row) => (
-          <Table.Row>
-            {row.map((cell) => (
-              <Table.Cell>{cell}</Table.Cell>
+        {body.map((row, rowIndex) => (
+          <Table.Row key={rowIndex}>
+            {row.map((cell, cellIndex) => (
+              <Table.Cell key={cellIndex}>{cell}</Table.Cell>
             ))}
           </Table.Row>
         ))}
@@ -31,4 +31,4 @@ const GenericTable = (props: Props) => {
   );
 };
 
-export default GenericTable;  
+export default GenericTable;

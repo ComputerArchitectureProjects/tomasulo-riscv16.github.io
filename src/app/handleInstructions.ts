@@ -562,7 +562,7 @@ class InstructionHandler {
 
     }
     public writeInstruction(): void {
-        if (!this.minHeapWriting.isEmpty() && this.minHeapWriting.peek().writeTime <= this.curClockCycle) {
+        if ((!this.minHeapWriting.isEmpty() && this.minHeapWriting.peek().writeTime <= this.curClockCycle)) {
             let min = this.minHeapWriting.pop();
             let stationNumber = min.stationNumber;
             let station = min.station;
