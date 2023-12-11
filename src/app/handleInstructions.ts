@@ -571,12 +571,8 @@ class InstructionHandler {
 
     }
     public writeInstruction(): void {
-<<<<<<< Updated upstream
-        if ((!this.minHeapWriting.isEmpty() && this.minHeapWriting.peek().writeTime <= this.curClockCycle)) {
-=======
         if (!this.minHeapWriting.isEmpty() && this.minHeapWriting.peek().writeTime <= this.curClockCycle) {
             alert("in write, cycle " + this.curClockCycle)
->>>>>>> Stashed changes
             let min = this.minHeapWriting.pop();
             let stationNumber = min.stationNumber;
             let station = min.station;
