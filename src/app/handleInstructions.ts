@@ -310,7 +310,7 @@ class InstructionHandler {
                                 this.bneStations[i].setQk(this.registerWrite[rs2]);
                             }
                             this.issueTime[this.issueCounter] = this.curClockCycle;
-                            if(this.bneFlag === -1){
+                            if (this.bneFlag === -1) {
                                 this.bneFlag = this.issueCounter;
                             }
                             this.issueCounter++;
@@ -338,7 +338,7 @@ class InstructionHandler {
                                 }
                             }
                             let label = (opcode === "CALL") ? instruction[1] : null;
-                            if(opcode === "CALL"){
+                            if (opcode === "CALL") {
                                 this.registerWrite[1].station = this.callRetStations[i].getName();
                                 this.registerWrite[1].index = i;
                             }
@@ -481,7 +481,7 @@ class InstructionHandler {
         for (let i = 0; i < this.bneStations.length; i++) {
             if (this.bneStations[i].getBusy() && this.startExecutionTime[this.bneStations[i].getnumOfInstruction()] == null) {
                 if (this.bneStations[i].getVj() !== -1 && this.bneStations[i].getVk() !== -1 && this.issueTime[this.bneStations[i].getnumOfInstruction()] < this.curClockCycle) {
-                    if(this.bneFlag === this.bneStations[i].getnumOfInstruction()) {        
+                    if (this.bneFlag === this.bneStations[i].getnumOfInstruction() || this.bneFlag === -1) {
                         let instructionNumber = this.bneStations[i].getnumOfInstruction();
                         // SET IN A CURRENT CLOCK CYCLE OR THIS.PC
                         this.startExecutionTime[instructionNumber] = this.curClockCycle;
@@ -492,11 +492,11 @@ class InstructionHandler {
                     }
                 }
             }
-        }      
+        }
         for (let i = 0; i < this.loadStations.length; i++) {
             if (this.loadStations[i].getBusy() && this.startExecutionTime[this.loadStations[i].getnumOfInstruction()] == null) {
                 if (this.loadStations[i].getVj() !== -1 && this.issueTime[this.loadStations[i].getnumOfInstruction()] < this.curClockCycle) {
-                    if(this.bneFlag > this.loadStations[i].getnumOfInstruction()) {        
+                    if (this.bneFlag > this.loadStations[i].getnumOfInstruction() || this.bneFlag === -1) {
                         //alert("in load execute")
                         let instructionNumber = this.loadStations[i].getnumOfInstruction();
                         let instruction = this.instructions[instructionNumber].split(" ");
@@ -521,7 +521,7 @@ class InstructionHandler {
         for (let i = 0; i < this.storeStations.length; i++) {
             if (this.storeStations[i].getBusy() && this.startExecutionTime[this.storeStations[i].getnumOfInstruction()] == null) {
                 if (this.storeStations[i].getVj() !== -1 && this.storeStations[i].getVk() !== -1 && this.issueTime[this.storeStations[i].getnumOfInstruction()] < this.curClockCycle) {
-                    if(this.bneFlag > this.storeStations[i].getnumOfInstruction()) {        
+                    if (this.bneFlag > this.storeStations[i].getnumOfInstruction() || this.bneFlag === -1) {
                         let instructionNumber = this.storeStations[i].getnumOfInstruction();
                         let instruction = this.instructions[instructionNumber].split(" ");
                         instruction = this.cleanInstruction(instruction);
@@ -535,13 +535,13 @@ class InstructionHandler {
                         //alert(i + "STORE station number");
                         //alert(this.writeTime[instructionNumber] + "STORE write time");
                     }
-                }    
+                }
             }
         }
         for (let i = 0; i < this.addAddiStations.length; i++) {
             if (this.addAddiStations[i].getBusy() && this.startExecutionTime[this.addAddiStations[i].getnumOfInstruction()] == null) {
                 if (this.addAddiStations[i].getVj() !== -1 && this.issueTime[this.addAddiStations[i].getnumOfInstruction()] < this.curClockCycle) {
-                    if(this.bneFlag > this.addAddiStations[i].getnumOfInstruction()) {            
+                    if (this.bneFlag > this.addAddiStations[i].getnumOfInstruction() || this.bneFlag === -1) {
                         let instructionNumber = this.addAddiStations[i].getnumOfInstruction();
                         let instruction = this.instructions[instructionNumber].split(" ");
                         instruction = this.cleanInstruction(instruction);
@@ -572,7 +572,7 @@ class InstructionHandler {
         for (let i = 0; i < this.nandStations.length; i++) {
             if (this.nandStations[i].getBusy() && this.startExecutionTime[this.nandStations[i].getnumOfInstruction()] == null) {
                 if (this.nandStations[i].getVj() !== -1 && this.nandStations[i].getVk() !== -1 && this.issueTime[this.nandStations[i].getnumOfInstruction()] < this.curClockCycle) {
-                    if(this.bneFlag > this.nandStations[i].getnumOfInstruction()) {            
+                    if (this.bneFlag > this.nandStations[i].getnumOfInstruction() || this.bneFlag === -1) {
                         let instructionNumber = this.nandStations[i].getnumOfInstruction();
                         this.startExecutionTime[instructionNumber] = this.curClockCycle;
                         this.endExecutionTime[instructionNumber] = this.curClockCycle;
@@ -589,7 +589,7 @@ class InstructionHandler {
         for (let i = 0; i < this.divStations.length; i++) {
             if (this.divStations[i].getBusy() && this.startExecutionTime[this.divStations[i].getnumOfInstruction()] == null) {
                 if (this.divStations[i].getVj() !== -1 && this.divStations[i].getVk() !== -1 && this.issueTime[this.divStations[i].getnumOfInstruction()] < this.curClockCycle) {
-                    if(this.bneFlag > this.divStations[i].getnumOfInstruction()) {            
+                    if (this.bneFlag > this.divStations[i].getnumOfInstruction() || this.bneFlag === -1) {
                         let instructionNumber = this.divStations[i].getnumOfInstruction();
                         this.startExecutionTime[instructionNumber] = this.curClockCycle;
                         this.endExecutionTime[instructionNumber] = this.curClockCycle + 9;
@@ -605,22 +605,22 @@ class InstructionHandler {
         for (let i = 0; i < this.callRetStations.length; i++) {
             if (this.callRetStations[i].getBusy() && this.startExecutionTime[this.callRetStations[i].getnumOfInstruction()] == null) {
                 if (this.issueTime[this.callRetStations[i].getnumOfInstruction()] < this.curClockCycle) {
-                    if(this.bneFlag > this.callRetStations[i].getnumOfInstruction()) {            
+                    if (this.bneFlag > this.callRetStations[i].getnumOfInstruction() || this.bneFlag === -1) {
                         let instructionNumber = this.callRetStations[i].getnumOfInstruction();
                         this.startExecutionTime[instructionNumber] = this.curClockCycle;
                         this.endExecutionTime[instructionNumber] = this.curClockCycle;
                         this.writeTime[instructionNumber] = this.curClockCycle + 1;
-                        if(this.callRetStations[i].getOp() === "RET"){
+                        if (this.callRetStations[i].getOp() === "RET") {
                             this.issueCounter = this.callRetStations[i].getVj();
                             this.callRetStations[i].reset();
-                            this.availableCallRetStations++; 
-                        
-                        }else if(this.callRetStations[i].getOp() === "CALL"){
+                            this.availableCallRetStations++;
+
+                        } else if (this.callRetStations[i].getOp() === "CALL") {
                             this.issueCounter = parseInt(this.instructions[instructionNumber].split(" ")[1]);
                         }
-                        if(this.callRetStations[i].getOp() === "CALL"){
+                        if (this.callRetStations[i].getOp() === "CALL") {
                             this.minHeapWriting.push({ writeTime: this.writeTime[instructionNumber], stationNumber: i, station: "CALL" });
-                        }    
+                        }
                         alert(this.minHeapWriting.peek().stationNumber + "station number");
                         alert(this.minHeapWriting.peek().writeTime + "write time");
                     }
@@ -629,8 +629,8 @@ class InstructionHandler {
         }
     }
     public writeInstruction(): void {
-        if(this.bneFlag !== -1){
-            if(this.writeTime[this.bneFlag] <= this.curClockCycle){
+        if (this.bneFlag !== -1) {
+            if (this.writeTime[this.bneFlag] <= this.curClockCycle) {
                 let instructionNumber = this.bneStations[this.bneFlagStationNumber].getnumOfInstruction();
                 let instruction = this.instructions[instructionNumber].split(" ");
                 instruction = this.cleanInstruction(instruction);
@@ -702,7 +702,7 @@ class InstructionHandler {
                     let instructionNumber = this.addAddiStations[stationNumber].getnumOfInstruction();
                     let instruction = this.instructions[instructionNumber].split(" ");
                     instruction = this.cleanInstruction(instruction);
-                    let opcode  = this.addAddiStations[stationNumber].getOp();
+                    let opcode = this.addAddiStations[stationNumber].getOp();
                     let dest = parseInt(instruction[1][1]);
                     let value = this.addAddiStations[stationNumber].getVj() + (opcode === "ADD" ? this.addAddiStations[stationNumber].getVk() : parseInt(instruction[3]));
                     this.registerFile.writeRegister(dest, value);
