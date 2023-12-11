@@ -562,7 +562,7 @@ class InstructionHandler {
                     this.startExecutionTime[instructionNumber] = this.curClockCycle;
                     this.endExecutionTime[instructionNumber] = this.curClockCycle + 9;
                     this.writeTime[instructionNumber] = this.curClockCycle + 10;
-                    this.minHeapWriting.push({ writeTime: this.writeTime[instructionNumber], stationNumber: i, station: "NAND" });
+                    this.minHeapWriting.push({ writeTime: this.writeTime[instructionNumber], stationNumber: i, station: "DIV" });
                     alert(this.minHeapWriting.peek().stationNumber + "station number");
                     alert(this.minHeapWriting.peek().writeTime + "write time");
                 }
