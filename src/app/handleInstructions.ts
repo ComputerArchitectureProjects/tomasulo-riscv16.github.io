@@ -35,12 +35,12 @@ class InstructionHandler {
 
         for (let i = 0; i < this.availableLoadStations; i++) {
             let station = new Station();
-            station.setName("Load");
+            station.setName("LOAD");
             this.loadStations.push(station);
         }
         for (let i = 0; i < this.availableStoreStations; i++) {
             let station = new Station();
-            station.setName("Store");
+            station.setName("STORE");
             this.storeStations.push(station);
         }
         for (let i = 0; i < this.availableBNEStations; i++) {
@@ -60,12 +60,12 @@ class InstructionHandler {
         }
         for (let i = 0; i < this.availableDivStations; i++) {
             let station = new Station();
-            station.setName("Div");
+            station.setName("DIV");
             this.divStations.push(station);
         }
         for (let i = 0; i < this.availableNandStations; i++) {
             let station = new Station();
-            station.setName("Nand");
+            station.setName("NAND");
             this.nandStations.push(station);
         }
         for (let i = 0; i < 8; i++) {
@@ -523,7 +523,7 @@ class InstructionHandler {
                         this.endExecutionTime[instructionNumber] = this.curClockCycle + 1;
                         this.writeTime[instructionNumber] = this.curClockCycle + 2;
                         alert("ADD write time: " + this.writeTime[instructionNumber])
-                        this.minHeapWriting.push({ writeTime: this.writeTime[instructionNumber], stationNumber: i, station: "ADD" });
+                        this.minHeapWriting.push({ writeTime: this.writeTime[instructionNumber], stationNumber: i, station: "AddAddi" });
                         //alert(this.minHeapWriting.peek().stationNumber + "station number");
                         //alert(this.minHeapWriting.peek().writeTime + "write time");
                     } else if (instruction[0] === "ADDI") {
@@ -532,7 +532,7 @@ class InstructionHandler {
                         this.endExecutionTime[instructionNumber] = this.curClockCycle + 1;
                         this.writeTime[instructionNumber] = this.curClockCycle + 2;
                         alert("ADDI write time: " + this.writeTime[instructionNumber])
-                        this.minHeapWriting.push({ writeTime: this.writeTime[instructionNumber], stationNumber: i, station: "ADDI" });
+                        this.minHeapWriting.push({ writeTime: this.writeTime[instructionNumber], stationNumber: i, station: "AddAddi" });
                         //alert(this.minHeapWriting.peek().stationNumber + "station number");
                         //alert("ADDI write time in heap: " + this.minHeapWriting.peek().writeTime);
                     }
@@ -622,12 +622,13 @@ class InstructionHandler {
                     this.flushIssuing(instructionNumber);
                 }
                     break;
-                case "ADD": {
+                case "AddAddi": {
                     let instructionNumber = this.addAddiStations[stationNumber].getnumOfInstruction();
                     let instruction = this.instructions[instructionNumber].split(" ");
                     instruction = this.cleanInstruction(instruction);
+                    let opcode  = this.addAddiStations[stationNumber].getOp();
                     let dest = parseInt(instruction[1][1]);
-                    let value = this.addAddiStations[stationNumber].getVj() + this.addAddiStations[stationNumber].getVk();
+                    let value = this.addAddiStations[stationNumber].getVj() + (opcode === "ADD" ? this.addAddiStations[stationNumber].getVk() : parseInt(instruction[3]));
                     this.registerFile.writeRegister(dest, value);
                     this.addAddiStations[stationNumber].reset();
                     this.availableAddAddiStations++;
@@ -638,23 +639,23 @@ class InstructionHandler {
                     this.updateReservationStation({ station: station, index: stationNumber }, value);
                 }
                     break;
-                case "ADDI": {
-                    let instructionNumber = this.addAddiStations[stationNumber].getnumOfInstruction();
-                    let instruction = this.instructions[instructionNumber].split(" ");
-                    instruction = this.cleanInstruction(instruction);
-                    let dest = parseInt(instruction[1][1]);
-                    let value = this.addAddiStations[stationNumber].getVj() + parseInt(instruction[3]);
-                    this.registerFile.writeRegister(dest, value);
-                    this.addAddiStations[stationNumber].reset();
-                    this.availableAddAddiStations++;
-                    this.registerWrite[dest].station = "";
-                    this.registerWrite[dest].index = -1;
-                    this.writeTime[instructionNumber] = this.curClockCycle;
-                    alert("actual ADDI write time: " + this.writeTime[instructionNumber])
-                    this.updateReservationStation({ station: station, index: stationNumber }, value);
+                // case "ADDI": {
+                //     let instructionNumber = this.addAddiStations[stationNumber].getnumOfInstruction();
+                //     let instruction = this.instructions[instructionNumber].split(" ");
+                //     instruction = this.cleanInstruction(instruction);
+                //     let dest = parseInt(instruction[1][1]);
+                //     let value = this.addAddiStations[stationNumber].getVj() + parseInt(instruction[3]);
+                //     this.registerFile.writeRegister(dest, value);
+                //     this.addAddiStations[stationNumber].reset();
+                //     this.availableAddAddiStations++;
+                //     this.registerWrite[dest].station = "";
+                //     this.registerWrite[dest].index = -1;
+                //     this.writeTime[instructionNumber] = this.curClockCycle;
+                //     alert("actual ADDI write time: " + this.writeTime[instructionNumber])
+                //     this.updateReservationStation({ station: station, index: stationNumber }, value);
 
-                }
-                    break;
+                // }
+                //     break;
                 case "NAND": {
                     let instructionNumber = this.nandStations[stationNumber].getnumOfInstruction();
                     let instruction = this.instructions[instructionNumber].split(" ");

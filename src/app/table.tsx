@@ -32,3 +32,4 @@ const GenericTable = (props: Props) => {
 };
 
 export default GenericTable;
+// deploy website
