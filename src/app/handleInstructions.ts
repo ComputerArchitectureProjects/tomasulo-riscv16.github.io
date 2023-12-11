@@ -15,6 +15,7 @@ class InstructionHandler {
     constructor(input: string, startingaddress: number, numOfStations: number[]) {
         alert(input)
         this.instructions = input.split('\n');
+        this.PC = startingaddress;
         //this.startingaddress = startingaddress;
         this.memory = new Memory();
         this.registerFile = new RegisterFile();
@@ -92,6 +93,7 @@ class InstructionHandler {
     private availableAddAddiStations: number = 3;
     private availableDivStations: number = 1;
     private availableNandStations: number = 1;
+    private bneFlag: number=-1;
     private registerWrite;
     private PC: number;
     public issueTime;
@@ -101,6 +103,10 @@ class InstructionHandler {
     private issueCounter: number = 0;
     private curClockCycle: number = 1;
     private minHeapWriting: BinaryHeap<MinHeapPair>;
+
+    private resetBneFlag(): void {
+        this.bneFlag = -1;
+    }
 
     private cleanInstruction(instruction: string[]): string[] {
         instruction.forEach((value, index, arr) => {
@@ -303,6 +309,9 @@ class InstructionHandler {
                                 this.bneStations[i].setQk(this.registerWrite[rs2]);
                             }
                             this.issueTime[this.issueCounter] = this.curClockCycle;
+                            if(this.bneFlag === -1){
+                                this.bneFlag = this.issueCounter;
+                            }
                             this.issueCounter++;
                             this.availableBNEStations--;
                             break;
@@ -457,118 +466,120 @@ class InstructionHandler {
     }
     // check pc of executing laod and store and call and ret
     public executeInstruction(): void {
-        for (let i = 0; i < this.loadStations.length; i++) {
-            if (this.loadStations[i].getBusy() && this.startExecutionTime[this.loadStations[i].getnumOfInstruction()] == null) {
-                if (this.loadStations[i].getVj() !== -1 && this.issueTime[this.loadStations[i].getnumOfInstruction()] < this.curClockCycle) {
-                    //alert("in load execute")
-                    let instructionNumber = this.loadStations[i].getnumOfInstruction();
-                    let instruction = this.instructions[instructionNumber].split(" ");
-                    instruction = this.cleanInstruction(instruction);
-                    let offset = parseInt(instruction[2].substring(0, instruction[2].length - 1));
-                    let base = parseInt(instruction[2][instruction[2].length - 2]);
-                    this.loadStations[i].setA(this.registerFile.readRegister(base) + offset);
-                    this.startExecutionTime[instructionNumber] = this.curClockCycle + 1;
-                    this.endExecutionTime[instructionNumber] = this.curClockCycle + 2;
-                    this.writeTime[instructionNumber] = this.curClockCycle + 3;
-                    this.minHeapWriting.push({ writeTime: this.writeTime[instructionNumber], stationNumber: i, station: "LOAD" });
-                    /*alert(i + " LOAD station number");
-                    alert(this.issueTime[instructionNumber] + " LOAD issue time");
-                    alert(this.startExecutionTime[instructionNumber] + " LOAD exec start time");
-                    alert(this.endExecutionTime[instructionNumber] + " LOAD exec fin time");
-                    alert(this.writeTime[instructionNumber] + " LOAD write time");
-                    alert(instruction);*/
-                }
-            }
-        }
-        for (let i = 0; i < this.storeStations.length; i++) {
-            if (this.storeStations[i].getBusy() && this.startExecutionTime[this.storeStations[i].getnumOfInstruction()] == null) {
-                if (this.storeStations[i].getVj() !== -1 && this.storeStations[i].getVk() !== -1 && this.issueTime[this.storeStations[i].getnumOfInstruction()] < this.curClockCycle) {
-                    let instructionNumber = this.storeStations[i].getnumOfInstruction();
-                    let instruction = this.instructions[instructionNumber].split(" ");
-                    instruction = this.cleanInstruction(instruction);
-                    let offset = parseInt(instruction[2].substring(0, instruction[2].length - 1));
-                    let base = parseInt(instruction[2][instruction[2].length - 2]);
-                    this.storeStations[i].setA(this.registerFile.readRegister(base) + offset);
-                    this.startExecutionTime[instructionNumber] = this.curClockCycle + 1;
-                    this.endExecutionTime[instructionNumber] = this.curClockCycle + 2;
-                    this.writeTime[instructionNumber] = this.curClockCycle + 3;
-                    this.minHeapWriting.push({ writeTime: this.writeTime[instructionNumber], stationNumber: i, station: "STORE" });
-                    //alert(i + "STORE station number");
-                    //alert(this.writeTime[instructionNumber] + "STORE write time");
-                }
-            }
-        }
         for (let i = 0; i < this.bneStations.length; i++) {
             if (this.bneStations[i].getBusy() && this.startExecutionTime[this.bneStations[i].getnumOfInstruction()] == null) {
                 if (this.bneStations[i].getVj() !== -1 && this.bneStations[i].getVk() !== -1 && this.issueTime[this.bneStations[i].getnumOfInstruction()] < this.curClockCycle) {
-                    let instructionNumber = this.bneStations[i].getnumOfInstruction();
-                    // SET IN A CURRENT CLOCK CYCLE OR THIS.PC
-                    this.startExecutionTime[instructionNumber] = this.curClockCycle;
-                    this.endExecutionTime[instructionNumber] = this.curClockCycle + 1;
-                    this.writeTime[instructionNumber] = this.curClockCycle + 2;
-                    this.minHeapWriting.push({ writeTime: this.writeTime[instructionNumber], stationNumber: i, station: "BNE" });
+                    if(this.bneFlag === this.bneStations[i].getnumOfInstruction()) {        
+                        let instructionNumber = this.bneStations[i].getnumOfInstruction();
+                        // SET IN A CURRENT CLOCK CYCLE OR THIS.PC
+                        this.startExecutionTime[instructionNumber] = this.curClockCycle;
+                        this.endExecutionTime[instructionNumber] = this.curClockCycle + 1;
+                        this.writeTime[instructionNumber] = this.curClockCycle + 2;
+                        //this.minHeapWriting.push({ writeTime: this.writeTime[instructionNumber], stationNumber: i, station: "BNE" });
+                    }
+                }
+            }
+        }      
+        if(this.bneFlag === -1){
+            for (let i = 0; i < this.loadStations.length; i++) {
+                if (this.loadStations[i].getBusy() && this.startExecutionTime[this.loadStations[i].getnumOfInstruction()] == null) {
+                    if (this.loadStations[i].getVj() !== -1 && this.issueTime[this.loadStations[i].getnumOfInstruction()] < this.curClockCycle) {
+                        //alert("in load execute")
+                        let instructionNumber = this.loadStations[i].getnumOfInstruction();
+                        let instruction = this.instructions[instructionNumber].split(" ");
+                        instruction = this.cleanInstruction(instruction);
+                        let offset = parseInt(instruction[2].substring(0, instruction[2].length - 1));
+                        let base = parseInt(instruction[2][instruction[2].length - 2]);
+                        this.loadStations[i].setA(this.registerFile.readRegister(base) + offset);
+                        this.startExecutionTime[instructionNumber] = this.curClockCycle + 1;
+                        this.endExecutionTime[instructionNumber] = this.curClockCycle + 2;
+                        this.writeTime[instructionNumber] = this.curClockCycle + 3;
+                        this.minHeapWriting.push({ writeTime: this.writeTime[instructionNumber], stationNumber: i, station: "LOAD" });
+                        /*alert(i + " LOAD station number");
+                        alert(this.issueTime[instructionNumber] + " LOAD issue time");
+                        alert(this.startExecutionTime[instructionNumber] + " LOAD exec start time");
+                        alert(this.endExecutionTime[instructionNumber] + " LOAD exec fin time");
+                        alert(this.writeTime[instructionNumber] + " LOAD write time");
+                        alert(instruction);*/
+                    }
+                }
+            }
+            for (let i = 0; i < this.storeStations.length; i++) {
+                if (this.storeStations[i].getBusy() && this.startExecutionTime[this.storeStations[i].getnumOfInstruction()] == null) {
+                    if (this.storeStations[i].getVj() !== -1 && this.storeStations[i].getVk() !== -1 && this.issueTime[this.storeStations[i].getnumOfInstruction()] < this.curClockCycle) {
+                        let instructionNumber = this.storeStations[i].getnumOfInstruction();
+                        let instruction = this.instructions[instructionNumber].split(" ");
+                        instruction = this.cleanInstruction(instruction);
+                        let offset = parseInt(instruction[2].substring(0, instruction[2].length - 1));
+                        let base = parseInt(instruction[2][instruction[2].length - 2]);
+                        this.storeStations[i].setA(this.registerFile.readRegister(base) + offset);
+                        this.startExecutionTime[instructionNumber] = this.curClockCycle + 1;
+                        this.endExecutionTime[instructionNumber] = this.curClockCycle + 2;
+                        this.writeTime[instructionNumber] = this.curClockCycle + 3;
+                        this.minHeapWriting.push({ writeTime: this.writeTime[instructionNumber], stationNumber: i, station: "STORE" });
+                        //alert(i + "STORE station number");
+                        //alert(this.writeTime[instructionNumber] + "STORE write time");
+                    }
+                }
+            }
+            for (let i = 0; i < this.addAddiStations.length; i++) {
+                if (this.addAddiStations[i].getBusy() && this.startExecutionTime[this.addAddiStations[i].getnumOfInstruction()] == null) {
+                    if (this.addAddiStations[i].getVj() !== -1 && this.issueTime[this.addAddiStations[i].getnumOfInstruction()] < this.curClockCycle) {
+                        let instructionNumber = this.addAddiStations[i].getnumOfInstruction();
+                        let instruction = this.instructions[instructionNumber].split(" ");
+                        instruction = this.cleanInstruction(instruction);
+                        if (instruction[0] === "ADD" && this.addAddiStations[i].getVk() !== -1) {
+                            alert("in add execute")
+                            this.startExecutionTime[instructionNumber] = this.curClockCycle;
+                            this.endExecutionTime[instructionNumber] = this.curClockCycle + 1;
+                            this.writeTime[instructionNumber] = this.curClockCycle + 2;
+                            alert("ADD write time: " + this.writeTime[instructionNumber])
+                            this.minHeapWriting.push({ writeTime: this.writeTime[instructionNumber], stationNumber: i, station: "AddAddi" });
+                            //alert(this.minHeapWriting.peek().stationNumber + "station number");
+                            //alert(this.minHeapWriting.peek().writeTime + "write time");
+                        } else if (instruction[0] === "ADDI") {
+                            alert("in addi execute")
+                            this.startExecutionTime[instructionNumber] = this.curClockCycle;
+                            this.endExecutionTime[instructionNumber] = this.curClockCycle + 1;
+                            this.writeTime[instructionNumber] = this.curClockCycle + 2;
+                            alert("ADDI write time: " + this.writeTime[instructionNumber])
+                            this.minHeapWriting.push({ writeTime: this.writeTime[instructionNumber], stationNumber: i, station: "AddAddi" });
+                            //alert(this.minHeapWriting.peek().stationNumber + "station number");
+                            //alert("ADDI write time in heap: " + this.minHeapWriting.peek().writeTime);
+                        }
+                    }
                 }
             }
 
-        }
-        for (let i = 0; i < this.addAddiStations.length; i++) {
-            if (this.addAddiStations[i].getBusy() && this.startExecutionTime[this.addAddiStations[i].getnumOfInstruction()] == null) {
-                if (this.addAddiStations[i].getVj() !== -1 && this.issueTime[this.addAddiStations[i].getnumOfInstruction()] < this.curClockCycle) {
-                    let instructionNumber = this.addAddiStations[i].getnumOfInstruction();
-                    let instruction = this.instructions[instructionNumber].split(" ");
-                    instruction = this.cleanInstruction(instruction);
-                    if (instruction[0] === "ADD" && this.addAddiStations[i].getVk() !== -1) {
-                        alert("in add execute")
+            for (let i = 0; i < this.nandStations.length; i++) {
+                if (this.nandStations[i].getBusy() && this.startExecutionTime[this.nandStations[i].getnumOfInstruction()] == null) {
+                    if (this.nandStations[i].getVj() !== -1 && this.nandStations[i].getVk() !== -1 && this.issueTime[this.nandStations[i].getnumOfInstruction()] < this.curClockCycle) {
+                        let instructionNumber = this.nandStations[i].getnumOfInstruction();
                         this.startExecutionTime[instructionNumber] = this.curClockCycle;
-                        this.endExecutionTime[instructionNumber] = this.curClockCycle + 1;
-                        this.writeTime[instructionNumber] = this.curClockCycle + 2;
-                        alert("ADD write time: " + this.writeTime[instructionNumber])
-                        this.minHeapWriting.push({ writeTime: this.writeTime[instructionNumber], stationNumber: i, station: "AddAddi" });
+                        this.endExecutionTime[instructionNumber] = this.curClockCycle;
+                        this.writeTime[instructionNumber] = this.curClockCycle + 1;
+                        alert("NAND writeTime: " + this.writeTime[instructionNumber])
+                        this.minHeapWriting.push({ writeTime: this.writeTime[instructionNumber], stationNumber: i, station: "NAND" });
                         //alert(this.minHeapWriting.peek().stationNumber + "station number");
-                        //alert(this.minHeapWriting.peek().writeTime + "write time");
-                    } else if (instruction[0] === "ADDI") {
-                        alert("in addi execute")
+                        //alert("NAND write time in heap: " + this.minHeapWriting.peek().writeTime);
+                    }
+                }
+            }
+
+            for (let i = 0; i < this.divStations.length; i++) {
+                if (this.divStations[i].getBusy() && this.startExecutionTime[this.divStations[i].getnumOfInstruction()] == null) {
+                    if (this.divStations[i].getVj() !== -1 && this.divStations[i].getVk() !== -1 && this.issueTime[this.divStations[i].getnumOfInstruction()] < this.curClockCycle) {
+                        let instructionNumber = this.divStations[i].getnumOfInstruction();
                         this.startExecutionTime[instructionNumber] = this.curClockCycle;
-                        this.endExecutionTime[instructionNumber] = this.curClockCycle + 1;
-                        this.writeTime[instructionNumber] = this.curClockCycle + 2;
-                        alert("ADDI write time: " + this.writeTime[instructionNumber])
-                        this.minHeapWriting.push({ writeTime: this.writeTime[instructionNumber], stationNumber: i, station: "AddAddi" });
-                        //alert(this.minHeapWriting.peek().stationNumber + "station number");
-                        //alert("ADDI write time in heap: " + this.minHeapWriting.peek().writeTime);
+                        this.endExecutionTime[instructionNumber] = this.curClockCycle + 9;
+                        this.writeTime[instructionNumber] = this.curClockCycle + 10;
+                        this.minHeapWriting.push({ writeTime: this.writeTime[instructionNumber], stationNumber: i, station: "DIV" });
+                        alert(this.minHeapWriting.peek().stationNumber + "station number");
+                        alert(this.minHeapWriting.peek().writeTime + "write time");
                     }
                 }
             }
         }
-
-        for (let i = 0; i < this.nandStations.length; i++) {
-            if (this.nandStations[i].getBusy() && this.startExecutionTime[this.nandStations[i].getnumOfInstruction()] == null) {
-                if (this.nandStations[i].getVj() !== -1 && this.nandStations[i].getVk() !== -1 && this.issueTime[this.nandStations[i].getnumOfInstruction()] < this.curClockCycle) {
-                    let instructionNumber = this.nandStations[i].getnumOfInstruction();
-                    this.startExecutionTime[instructionNumber] = this.curClockCycle;
-                    this.endExecutionTime[instructionNumber] = this.curClockCycle;
-                    this.writeTime[instructionNumber] = this.curClockCycle + 1;
-                    alert("NAND writeTime: " + this.writeTime[instructionNumber])
-                    this.minHeapWriting.push({ writeTime: this.writeTime[instructionNumber], stationNumber: i, station: "NAND" });
-                    //alert(this.minHeapWriting.peek().stationNumber + "station number");
-                    //alert("NAND write time in heap: " + this.minHeapWriting.peek().writeTime);
-                }
-            }
-        }
-
-        for (let i = 0; i < this.divStations.length; i++) {
-            if (this.divStations[i].getBusy() && this.startExecutionTime[this.divStations[i].getnumOfInstruction()] == null) {
-                if (this.divStations[i].getVj() !== -1 && this.divStations[i].getVk() !== -1 && this.issueTime[this.divStations[i].getnumOfInstruction()] < this.curClockCycle) {
-                    let instructionNumber = this.divStations[i].getnumOfInstruction();
-                    this.startExecutionTime[instructionNumber] = this.curClockCycle;
-                    this.endExecutionTime[instructionNumber] = this.curClockCycle + 9;
-                    this.writeTime[instructionNumber] = this.curClockCycle + 10;
-                    this.minHeapWriting.push({ writeTime: this.writeTime[instructionNumber], stationNumber: i, station: "DIV" });
-                    alert(this.minHeapWriting.peek().stationNumber + "station number");
-                    alert(this.minHeapWriting.peek().writeTime + "write time");
-                }
-            }
-        }
-
     }
     public writeInstruction(): void {
         if (!this.minHeapWriting.isEmpty() && this.minHeapWriting.peek().writeTime <= this.curClockCycle) {
@@ -613,7 +624,7 @@ class InstructionHandler {
                     let rs2 = parseInt(instruction[2][1]);
                     let imm = parseInt(instruction[3]);
                     if (this.bneStations[stationNumber].getVj() !== this.bneStations[stationNumber].getVk()) {
-                        this.PC += imm;
+                        this.issueCounter += imm;
                         // fix later plz
                     }
                     this.bneStations[stationNumber].reset();
@@ -706,7 +717,7 @@ class InstructionHandler {
                     break;
                 case "RET": {
                     let instructionNumber = this.callRetStations[stationNumber].getnumOfInstruction();
-                    this.PC = this.registerFile.readRegister(1);
+                    this.issueCounter = this.registerFile.readRegister(1);
                     this.writeTime[instructionNumber] = this.curClockCycle;
                     this.callRetStations[stationNumber].reset();
                     this.availableCallRetStations++;
@@ -722,6 +733,7 @@ class InstructionHandler {
     }
     public tomasulo(instructions: string[]): void {
         for (let i = 0; i < instructions.length; i++) { // fix loop over clock cycles
+            this.PC = this.issueCounter + this.startingaddress;
             let instruction = instructions[this.issueCounter].split(' ');
             instruction = this.cleanInstruction(instruction);
             this.issueInstruction(instruction);

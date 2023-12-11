@@ -10,7 +10,7 @@ type Props = {
 const GenericTable = (props: Props) => {
   const { header, body } = props;
   return (
-    <Table celled>
+    <Table celled style={{ width: '100%' }}>
       <Table.Header>
         <Table.Row>
           {header.map((headerItem, index) => (

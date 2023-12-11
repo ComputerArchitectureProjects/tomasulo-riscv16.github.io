@@ -1,15 +1,17 @@
 // ParentComponent.tsx
 "use client"
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import Editor from '@monaco-editor/react';
-import RegisterFile from './registers';
-import Memory from './memory';
 import InstructionHandler from './handleInstructions';
 import BinaryHeap from './minheap';
 import GenericTable from './table';
-
+import { IconButton } from '@mui/material';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import { Play } from 'next/font/google';
+import TextField from './integertextfield'
 
 const Home = () => {
+  const [intgerVal, setValue] = useState('');
   const editorRef = useRef<any>(null);
   const InstructionHandlerRef = useRef<InstructionHandler | null>(null);
 
@@ -82,21 +84,73 @@ const Home = () => {
   return (
     <>
       <div className='Home'>
-        <button onClick={test}>Run</button>
-        <GenericTable
-          header={['Instruction', 'Issue Time', 'Execute Time', 'Write Time', 'Commit Time']}
-          body={[['LOAD X1, 43(X2)', '1', '2', '3', '4'], ['STORE X1, 43(X2)', '1', '2', '3', '4'], ['ADD X1, X2, X3', '1', '2', '3', '4'], ['NAND X1, X2, X3', '1', '2', '3', '4'], ['DIV X1, X2, X3', '1', '2', '3', '4'], ['ADDI X1, X2, 44', '1', '2', '3', '4']]}
-        >
-        </GenericTable>
-        <div className='Editor'>
-          <h6 className='h6'>Type Your Instructions</h6>
-          <Editor
-            className='EditorComponent'
-            defaultLanguage="cpp"
-            defaultValue="// some comment"
-            theme="vs-dark"
-            onMount={handleEditorDidMount}
-          />
+        <div className='mainlayout'>
+          <div className='leftside'>
+            <div className='texteditors-container'>
+              <div className='texteditors-row'>
+                <TextField/>
+                <TextField/>
+              </div>
+              <div className='texteditors-row'>
+                <TextField />
+                <TextField />
+              </div>
+              <div className='texteditors-row'>
+                <TextField />
+                <TextField />
+              </div>
+              <div className='texteditors-row'>
+                <TextField />
+                <TextField />
+              </div>
+            </div>
+            <div className='instructioninput'>
+                  <div className='Editor'>
+                    <div className='topEditor'>
+                      <h4 className='h6'>Type Your Instructions</h4>
+                      <IconButton onClick={showValue} aria-label="Start"> 
+                        <PlayArrowIcon fontSize='large' style={{ color: 'goldenrod' }}/>
+                      </IconButton>
+                    </div>
+                  <Editor
+                    className='EditorComponent'
+                    defaultLanguage="cpp"
+                    defaultValue="// some comment"
+                    theme="vs-dark"
+                    onMount={handleEditorDidMount}
+                  />
+                </div>
+              </div>
+            </div>
+          <div className='rightside'>
+            <div>
+            <div className='texteditors-container'>
+              <div className='texteditors-row'>
+                <TextField/>
+                <TextField/>
+              </div>
+              <div className='texteditors-row'>
+                <TextField />
+                <TextField />
+              </div>
+              <div className='texteditors-row'>
+                <TextField />
+                <TextField />
+              </div>
+              <div className='texteditors-row'>
+                <TextField />
+                <TextField />
+              </div>
+            </div>
+            </div>
+            <div className='table'>
+            <GenericTable 
+              header = {['Instruction', 'Issue Time', 'Execute Time', 'Write Time', 'Commit Time']}
+              body   = {[['LOAD X1, 43(X2)', '1', '2', '3', '4'], ['STORE X1, 43(X2)', '1', '2', '3', '4'], ['ADD X1, X2, X3', '1', '2', '3', '4'], ['NAND X1, X2, X3', '1', '2', '3', '4'], ['DIV X1, X2, X3', '1', '2', '3', '4'], ['ADDI X1, X2, 44', '1', '2', '3', '4']]}
+            >
+            </GenericTable> 
+            </div>
+          </div>
         </div>
       </div>
     </>
