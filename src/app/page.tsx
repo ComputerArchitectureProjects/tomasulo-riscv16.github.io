@@ -108,7 +108,7 @@ const Home = () => {
                   <div className='Editor'>
                     <div className='topEditor'>
                       <h4 className='h6'>Type Your Instructions</h4>
-                      <IconButton onClick={showValue} aria-label="Start"> 
+                      <IconButton onClick={test} aria-label="Start"> 
                         <PlayArrowIcon fontSize='large' style={{ color: 'goldenrod' }}/>
                       </IconButton>
                     </div>

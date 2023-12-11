@@ -2,7 +2,6 @@ import Memory from './memory';
 import Station from './Station';
 import RegisterFile from './registers';
 import BinaryHeap from './minheap';
-import { Alert } from '@mui/material';
 
 type Pair = {
     station: string, index: number
