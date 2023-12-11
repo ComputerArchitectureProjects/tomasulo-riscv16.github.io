@@ -193,8 +193,6 @@ class InstructionHandler {
                 this.bneStations[i].setVj(value);
                 this.bneStations[i].setQj({ station: "", index: -1 });
             }
-            //alert("BNE WRITE BACK")
-            //alert(this.bneStations[i].getBusy() + " " + this.bneStations[i].getQk().station + " " + this.bneStations[i].getQk().index + " " + RS.station + " " + RS.index + " " + this.bneStations[i].getQj().station + " " + this.bneStations[i].getQj().index + " " + this.bneStations[i].getVj() + " " + this.bneStations[i].getVk() + " " + value + " " + this.bneStations[i].getnumOfInstruction() + " " + this.bneStations[i].getOp())
             if (this.bneStations[i].getBusy() && this.bneStations[i].getQk().station === RS.station && this.bneStations[i].getQk().index === RS.index) {
                 this.bneStations[i].setVk(value);
                 this.bneStations[i].setQk({ station: "", index: -1 });
